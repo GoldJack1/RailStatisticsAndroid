@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Rail Statistics</string>
+    <string name="back" />
+    <string name="statistics" />
+    <string name="filter" />
     <string name="settings">Settings</string>
     <string name="add_station">Add Station</string>
     <string name="import_stations">Import Stations</string>
@@ -7,4 +11,31 @@
     <string name="export_stations">Export Stations</string>
     <string name="clear_all_data">Clear Data</string>
     <string name="search_placeholder">Search</string>
+    <string name="edit">Edit</string>
+    <string name="station_detail">Station Detail</string>
+    <string name="station_name">Station Name</string>
+    <string name="country">Country</string>
+    <string name="county">County</string>
+    <string name="toc">TOC</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="visit_status">Visit Status</string>
+    <string name="visit_date">Visit Date</string>
+    <string name="favourite">Favourite</string>
+    <string name="usage_data">Usage Data</string>
+    <string name="greeting">Hello!</string>
+    <string name="welcome_message">Welcome to Rail Statistics</string>
+    <string name="subtitle_message">Easily track Tickets &amp; Station visits across the world.</string>
+    <string name="ticket_tracker">Ticket Tracker</string>
+    <string name="national_rail">National Rail</string>
+    <string name="newest_ticket">Newest Ticket</string>
+    <string name="newest_station_visited">Newest Station Visited</string>
+    <string name="placeholder_date_price">07/03/2025   £0.00</string>
+    <string name="placeholder_origin_destination">16:50 Huddersfield (HUD) to Wakefield Kirkgate (WKK)</string>
+    <string name="placeholder_ticket_type">Concessions</string>
+    <string name="placeholder_train_operator">TransPennine Express</string>
+    <string name="placeholder_station_name">Blantyre</string>
+    <string name="placeholder_county">South Lanarkshire</string>
+    <string name="placeholder_visited_date">Visited on 20 Feb 2025</string>
+    <string name="background_image">Background image for home page</string>
 </resources>
