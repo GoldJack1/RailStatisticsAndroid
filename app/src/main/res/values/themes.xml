@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base app theme (only a snippet is shown) -->
+    <style name="Theme.RailStatistics" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Other theme attributes -->
+    </style>
+
+    <!-- Popup Menu Overlay for Light Mode -->
+    <style name="ThemeOverlay.MyPopupMenu" parent="ThemeOverlay.MaterialComponents.Light">
+        <!-- White background for popup -->
+        <item name="android:popupBackground">@color/white</item>
+        <!-- Use black text for popup items -->
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+</resources>

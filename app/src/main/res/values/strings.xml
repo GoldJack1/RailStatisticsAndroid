@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Rail Statistics</string>
+    <string name="back" />
+    <string name="statistics" />
+    <string name="filter" />
+    <string name="settings">Settings</string>
+    <string name="add_station">Add Station</string>
+    <string name="import_stations">Import Stations</string>
+    <string name="import_blank_stations">Import Template</string>
+    <string name="export_stations">Export Stations</string>
+    <string name="clear_all_data">Clear Data</string>
+    <string name="search_placeholder">Search</string>
+</resources>
