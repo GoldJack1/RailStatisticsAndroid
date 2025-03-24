@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen padding -->
+    <dimen name="screen_padding">16dp</dimen>
+
+    <!-- Margins -->
+    <dimen name="margin_top">16dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_horizontal">8dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_size_large">32sp</dimen>
+    <dimen name="text_size_medium">20sp</dimen>
+    <dimen name="text_size_normal">16sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+
+    <!-- Card styling -->
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="card_elevation">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+
+    <!-- Button padding -->
+    <dimen name="button_padding">16dp</dimen>
+    <dimen name="button_padding_vertical">6dp</dimen>
+
+    <!-- Header height -->
+    <dimen name="header_height">80dp</dimen>  <!-- actionBarSize (56dp) + status bar (24dp) -->
+
+    <!-- Header padding -->
+    <dimen name="header_top_padding">24dp</dimen>
+</resources> 

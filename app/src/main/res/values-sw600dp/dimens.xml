@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen padding -->
+    <dimen name="screen_padding">24dp</dimen>
+
+    <!-- Margins -->
+    <dimen name="margin_top">24dp</dimen>
+    <dimen name="margin_medium">24dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_horizontal">16dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_size_large">40sp</dimen>
+    <dimen name="text_size_medium">24sp</dimen>
+    <dimen name="text_size_normal">18sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+
+    <!-- Card styling -->
+    <dimen name="card_corner_radius">24dp</dimen>
+    <dimen name="card_elevation">12dp</dimen>
+    <dimen name="card_padding">24dp</dimen>
+
+    <!-- Button padding -->
+    <dimen name="button_padding">24dp</dimen>
+    <dimen name="button_padding_vertical">12dp</dimen>
+</resources> 

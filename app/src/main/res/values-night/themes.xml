@@ -2,9 +2,16 @@
 <resources>
     <!-- Base dark theme (only a snippet is shown) -->
     <style name="Theme.RailStatistics" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">@color/purple_500</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Other theme attributes -->
+        
+        <!-- Make status bar and navigation bar transparent -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        <!-- Use light icons for dark theme -->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
     </style>
 
     <!-- Popup Menu Overlay for Dark Mode -->

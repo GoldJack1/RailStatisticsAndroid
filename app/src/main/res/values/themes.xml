@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base app theme (only a snippet is shown) -->
-    <style name="Theme.RailStatistics" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.RailStatistics" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorOnPrimary">@color/black</item>
-        <!-- Other theme attributes -->
+        
+        <!-- Make status bar and navigation bar transparent -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        <!-- Optional: Make status bar icons dark/light based on your background -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
     </style>
 
     <!-- Popup Menu Overlay for Light Mode -->

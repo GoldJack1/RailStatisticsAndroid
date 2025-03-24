@@ -9,10 +9,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
-import com.google.android.material.appbar.MaterialToolbar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -20,6 +23,12 @@ import com.google.gson.reflect.TypeToken
 import com.opencsv.CSVReader
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import android.os.Build
+import android.graphics.Color
+import android.view.WindowManager
+import com.google.android.material.card.MaterialCardView
+import androidx.core.view.updateLayoutParams
+import android.widget.LinearLayout
 
 class NationalRailActivity : AppCompatActivity() {
 
@@ -31,7 +40,68 @@ class NationalRailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Make the app draw under system bars
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        
+        // Enable blur effect for Android 12+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            window.attributes.blurBehindRadius = 32
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_BLUR_BEHIND,
+                WindowManager.LayoutParams.FLAG_BLUR_BEHIND
+            )
+        }
+        
+        // Make system bars transparent
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        
         setContentView(R.layout.activity_national_rail)
+
+        // Set up window insets
+        val headerContainer = findViewById<LinearLayout>(R.id.headerContainer)
+        val contentContainer = findViewById<LinearLayout>(R.id.contentContainer)
+        
+        ViewCompat.setOnApplyWindowInsetsListener(headerContainer) { view, windowInsets ->
+            val statusBars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars())
+            val navigationBars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            
+            // Update header padding to account for status bar
+            view.updatePadding(
+                top = statusBars.top + resources.getDimensionPixelSize(R.dimen.header_top_padding)
+            )
+            
+            // Update content padding to account for navigation bar
+            contentContainer.updatePadding(bottom = navigationBars.bottom)
+            
+            windowInsets
+        }
+
+        // Set up click listeners for header buttons
+        findViewById<MaterialCardView>(R.id.backButton).setOnClickListener {
+            onBackPressed()
+        }
+
+        findViewById<MaterialCardView>(R.id.statsButton).setOnClickListener {
+            // Handle stats click
+            Toast.makeText(this, "Stats clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<MaterialCardView>(R.id.filterButton).setOnClickListener {
+            // Handle filter click
+            Toast.makeText(this, "Filter clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<MaterialCardView>(R.id.settingsButton).setOnClickListener {
+            showSettingsDropdown(it)
+        }
+
+        // Set up search bar click
+        findViewById<MaterialCardView>(R.id.searchBar).setOnClickListener {
+            // Handle search click - you might want to expand this into a full search interface
+            Toast.makeText(this, "Search clicked", Toast.LENGTH_SHORT).show()
+        }
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewStations)
@@ -52,19 +122,6 @@ class NationalRailActivity : AppCompatActivity() {
                 result.data?.data?.let { uri ->
                     parseCSV(uri)
                 }
-            }
-        }
-
-        // Setup toolbar and handle clicks
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-        toolbar.setOnMenuItemClickListener { item ->
-            if (item.itemId == R.id.action_settings) {
-                // Use the toolbar's view for the anchor
-                showSettingsDropdown(toolbar.findViewById(R.id.action_settings))
-                true
-            } else {
-                false
             }
         }
     }
