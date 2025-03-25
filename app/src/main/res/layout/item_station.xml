@@ -1,47 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardStation"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:elevation="4dp">
+    android:layout_margin="6dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
-        android:padding="16dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvStationName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Station Name"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvCounty"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="County" />
+            android:layout_marginTop="2dp"
+            android:text="County"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tvTrainOperator"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Train Operator" />
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_train"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/tvTrainOperator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:text="Transport for Wales"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvVisitStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Visited"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvVisitedDate"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Visited Date" />
+            android:layout_marginTop="2dp"
+            android:paddingVertical="4dp"
+            android:text="Visited on 22 Jul 2024"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/tvVisitStatus"
+        <LinearLayout
+            android:id="@+id/btnUpdateStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Visit Status" />
+            android:layout_marginTop="16dp"
+            android:background="@drawable/semi_transparent_button_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/ic_edit"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update Visit Status"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+</com.google.android.material.card.MaterialCardView>

@@ -73,35 +73,37 @@ class StationDetailActivity : AppCompatActivity() {
         station?.let {
             // Basic Information
             findViewById<TextView>(R.id.tvStationName).text = it.name
-            findViewById<TextView>(R.id.tvCountry).text = it.county
-            findViewById<TextView>(R.id.tvCounty).text = it.trainOperator
-            findViewById<TextView>(R.id.tvTOC).text = it.visitedDate
+            findViewById<TextView>(R.id.tvCountry).text = it.country
+            findViewById<TextView>(R.id.tvCounty).text = it.county
+            findViewById<TextView>(R.id.tvTOC).text = it.trainOperator
 
             // Coordinates
-            findViewById<TextView>(R.id.tvLatitude).text = "Latitude: ${it.extraData.getOrNull(2) ?: "N/A"}"
-            findViewById<TextView>(R.id.tvLongitude).text = "Longitude: ${it.extraData.getOrNull(3) ?: "N/A"}"
+            findViewById<TextView>(R.id.tvLatitude).text = "Latitude: ${it.latitude}"
+            findViewById<TextView>(R.id.tvLongitude).text = "Longitude: ${it.longitude}"
 
             // Visit Status and Favorite
             findViewById<TextView>(R.id.tvVisitStatus).text = "Visited: ${it.visitStatus}"
-            findViewById<TextView>(R.id.tvVisitDate).text = "Visit Date: ${it.extraData.getOrNull(0) ?: "N/A"}"
+            findViewById<TextView>(R.id.tvVisitDate).text = "Visit Date: ${it.visitedDate}"
 
-            val favouriteStatus = it.extraData.getOrNull(1)?.lowercase() == "yes"
             val ivFavourite = findViewById<ImageView>(R.id.ivFavourite)
             ivFavourite.setImageResource(
-                if (favouriteStatus) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+                if (it.favorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
             )
 
             // Populate Usage Data
             val usageLayout = findViewById<LinearLayout>(R.id.layoutUsageData)
             usageLayout.removeAllViews()
 
-            val years = (2024 downTo 1997).toList()
-            years.forEachIndexed { index, year ->
+            // Create a row for each year from 2024 to 1998
+            (2024 downTo 1998).forEach { year ->
                 val usageTextView = TextView(this).apply {
-                    val usageValue = it.extraData.getOrNull(index + 4) ?: "N/A"
-                    text = "$year: $usageValue"
+                    // Get the usage value for this year, or "N/A" if not found or empty
+                    val usageValue = it.yearlyUsage[year]?.takeIf { it.isNotEmpty() } ?: "N/A"
+                    text = String.format("%-6d %s", year, usageValue)
                     textSize = 16f
                     setPadding(0, 4, 0, 4)
+                    // Use monospace font to align columns
+                    typeface = android.graphics.Typeface.MONOSPACE
                 }
                 usageLayout.addView(usageTextView)
             }

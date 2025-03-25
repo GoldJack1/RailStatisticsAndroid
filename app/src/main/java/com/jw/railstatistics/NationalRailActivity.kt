@@ -29,6 +29,7 @@ import android.view.WindowManager
 import com.google.android.material.card.MaterialCardView
 import androidx.core.view.updateLayoutParams
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 
 class NationalRailActivity : AppCompatActivity() {
 
@@ -36,7 +37,8 @@ class NationalRailActivity : AppCompatActivity() {
     private lateinit var adapter: StationAdapter
     private val stationList = mutableListOf<Station>()
 
-    private lateinit var csvLauncher: ActivityResultLauncher<Intent>
+    private lateinit var csvImportLauncher: ActivityResultLauncher<Intent>
+    private lateinit var csvExportLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,11 +107,17 @@ class NationalRailActivity : AppCompatActivity() {
 
         // Initialize RecyclerView
         recyclerView = findViewById(R.id.recyclerViewStations)
-        adapter = StationAdapter(stationList) { station ->
-            val intent = Intent(this, StationDetailActivity::class.java)
-            intent.putExtra("station", station)
-            startActivity(intent)
-        }
+        adapter = StationAdapter(
+            stationList,
+            onItemClick = { station ->
+                val intent = Intent(this, StationDetailActivity::class.java)
+                intent.putExtra("station", station)
+                startActivity(intent)
+            },
+            onUpdateStatusClick = { station ->
+                toggleStationStatus(station)
+            }
+        )
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
@@ -117,11 +125,18 @@ class NationalRailActivity : AppCompatActivity() {
         loadStationsFromDisk()
 
         // Register CSV import result handler
-        csvLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        csvImportLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.data?.let { uri ->
                     parseCSV(uri)
                 }
+            }
+        }
+
+        // Register CSV export result handler
+        csvExportLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
+            if (uri != null) {
+                exportToCSV(uri)
             }
         }
     }
@@ -146,11 +161,11 @@ class NationalRailActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_import_template -> {
-                    Toast.makeText(this, "Import Template selected", Toast.LENGTH_SHORT).show()
+                    importTemplate()
                     true
                 }
                 R.id.menu_export -> {
-                    Toast.makeText(this, "Export selected", Toast.LENGTH_SHORT).show()
+                    exportCSV()
                     true
                 }
                 R.id.menu_clear_data -> {
@@ -168,38 +183,56 @@ class NationalRailActivity : AppCompatActivity() {
 
     private fun importCSV() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            // Set the type to "*/*" to show all files
             type = "*/*"
-            // Allow CSV files by including several common CSV MIME types
             putExtra(
                 Intent.EXTRA_MIME_TYPES,
                 arrayOf("text/csv", "application/vnd.ms-excel", "text/plain", "text/comma-separated-values")
             )
             addCategory(Intent.CATEGORY_OPENABLE)
         }
-        csvLauncher.launch(Intent.createChooser(intent, "Select CSV file"))
+        csvImportLauncher.launch(Intent.createChooser(intent, "Select CSV file"))
     }
 
     private fun parseCSV(uri: Uri) {
         try {
             contentResolver.openInputStream(uri)?.use { inputStream ->
-                // Use CSVReader from OpenCSV to handle CSV parsing robustly.
                 CSVReader(InputStreamReader(inputStream)).use { reader ->
                     var isFirstLine = true
+                    
                     reader.forEach { tokens ->
                         if (isFirstLine) {
-                            // Skip header row if needed.
                             isFirstLine = false
                             return@forEach
                         }
-                        if (tokens.size >= 5) {
+                        
+                        if (tokens.size >= 9) { // Minimum columns needed
+                            // Create yearlyUsage map for years 2024-1998 (columns 9-35)
+                            val yearlyUsage = mutableMapOf<Int, String>()
+                            var year = 2024
+                            for (i in 9..35) {
+                                val usage = tokens.getOrNull(i)?.trim() ?: ""
+                                yearlyUsage[year] = usage
+                                year--
+                            }
+                            
+                            // Normalize visit status to "Visited" or "Not Visited"
+                            val rawVisitStatus = tokens[4].trim().lowercase()
+                            val visitStatus = when {
+                                rawVisitStatus == "yes" || rawVisitStatus == "visited" -> "Visited"
+                                else -> "Not Visited"
+                            }
+                            
                             val station = Station(
                                 name = tokens[0].trim(),
-                                county = tokens[1].trim(),
-                                trainOperator = tokens[2].trim(),
-                                visitedDate = tokens[3].trim(),
-                                visitStatus = tokens[4].trim(),
-                                extraData = tokens.drop(5)
+                                country = tokens[1].trim(),
+                                county = tokens[2].trim(),
+                                trainOperator = tokens[3].trim(),
+                                visitStatus = visitStatus,
+                                visitedDate = tokens[5].trim(),
+                                favorite = tokens[6].trim().equals("yes", ignoreCase = true),
+                                latitude = tokens[7].trim(),
+                                longitude = tokens[8].trim(),
+                                yearlyUsage = yearlyUsage
                             )
                             stationList.add(station)
                         }
@@ -208,7 +241,6 @@ class NationalRailActivity : AppCompatActivity() {
             }
             adapter.notifyDataSetChanged()
             Toast.makeText(this, "CSV imported successfully", Toast.LENGTH_SHORT).show()
-            // Save the imported data to disk
             saveStationsToDisk()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -252,6 +284,145 @@ class NationalRailActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
             // It's fine if the file doesn't exist yet
+        }
+    }
+
+    private fun toggleStationStatus(station: Station) {
+        // Find the station in the list
+        val index = stationList.indexOfFirst { it.name == station.name }
+        if (index != -1) {
+            // Toggle between Visited and Not Visited
+            val newStatus = if (station.visitStatus == "Visited") "Not Visited" else "Visited"
+            
+            val updatedStation = station.copy(
+                visitStatus = newStatus,
+                visitedDate = if (newStatus == "Visited") {
+                    java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale.UK)
+                        .format(java.util.Date())
+                } else ""
+            )
+            stationList[index] = updatedStation
+            adapter.notifyItemChanged(index)
+            saveStationsToDisk()
+        }
+    }
+
+    private fun exportCSV() {
+        val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.UK).format(java.util.Date())
+        val filename = "stations_$timestamp.csv"
+        csvExportLauncher.launch(filename)
+    }
+
+    private fun exportToCSV(uri: Uri) {
+        try {
+            contentResolver.openOutputStream(uri)?.use { outputStream ->
+                val writer = outputStream.bufferedWriter()
+                
+                // Write header
+                writer.write("Station Name,Country,County,Operator,Visited,Visit Date,Favorite,Latitude,Longitude")
+                // Add year headers from 2024 to 1998
+                (2024 downTo 1998).forEach { year ->
+                    writer.write(",$year")
+                }
+                writer.newLine()
+
+                // Write station data
+                stationList.forEach { station ->
+                    val line = buildString {
+                        // Basic info (escape commas in fields)
+                        append(escapeCsvField(station.name)).append(",")
+                        append(escapeCsvField(station.country)).append(",")
+                        append(escapeCsvField(station.county)).append(",")
+                        append(escapeCsvField(station.trainOperator)).append(",")
+                        append(if (station.visitStatus == "Visited") "Yes" else "No").append(",")
+                        append(escapeCsvField(station.visitedDate)).append(",")
+                        append(if (station.favorite) "Yes" else "No").append(",")
+                        append(escapeCsvField(station.latitude)).append(",")
+                        append(escapeCsvField(station.longitude))
+
+                        // Usage data
+                        (2024 downTo 1998).forEach { year ->
+                            append(",")
+                            append(escapeCsvField(station.yearlyUsage[year] ?: ""))
+                        }
+                    }
+                    writer.write(line)
+                    writer.newLine()
+                }
+                writer.flush()
+            }
+            Toast.makeText(this, "CSV exported successfully", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to export CSV", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun escapeCsvField(field: String): String {
+        return if (field.contains(",") || field.contains("\"") || field.contains("\n")) {
+            "\"${field.replace("\"", "\"\"")}\""
+        } else {
+            field
+        }
+    }
+
+    private fun importTemplate() {
+        try {
+            // Clear existing data
+            stationList.clear()
+            
+            // Read and parse the template file
+            assets.open("template_stations.csv").use { inputStream ->
+                CSVReader(InputStreamReader(inputStream)).use { reader ->
+                    var isFirstLine = true
+                    
+                    reader.forEach { tokens ->
+                        if (isFirstLine) {
+                            isFirstLine = false
+                            return@forEach
+                        }
+                        
+                        if (tokens.size >= 9) { // Minimum columns needed
+                            // Create yearlyUsage map for years 2024-1998 (columns 9-35)
+                            val yearlyUsage = mutableMapOf<Int, String>()
+                            var year = 2024
+                            for (i in 9..35) {
+                                val usage = tokens.getOrNull(i)?.trim() ?: ""
+                                yearlyUsage[year] = usage
+                                year--
+                            }
+                            
+                            // Normalize visit status to "Visited" or "Not Visited"
+                            val rawVisitStatus = tokens[4].trim().lowercase()
+                            val visitStatus = when {
+                                rawVisitStatus == "yes" || rawVisitStatus == "visited" -> "Visited"
+                                else -> "Not Visited"
+                            }
+                            
+                            val station = Station(
+                                name = tokens[0].trim(),
+                                country = tokens[1].trim(),
+                                county = tokens[2].trim(),
+                                trainOperator = tokens[3].trim(),
+                                visitStatus = visitStatus,
+                                visitedDate = tokens[5].trim(),
+                                favorite = tokens[6].trim().equals("yes", ignoreCase = true),
+                                latitude = tokens[7].trim(),
+                                longitude = tokens[8].trim(),
+                                yearlyUsage = yearlyUsage
+                            )
+                            stationList.add(station)
+                        }
+                    }
+                }
+            }
+            
+            adapter.notifyDataSetChanged()
+            saveStationsToDisk()
+            Toast.makeText(this, "Template imported successfully", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to import template", Toast.LENGTH_SHORT).show()
         }
     }
 }
