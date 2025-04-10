@@ -9,6 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.card.MaterialCardView
 import androidx.recyclerview.widget.RecyclerView
+import android.os.Build
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.graphics.Color
 
 class StationAdapter(
     private val stations: List<Station>,
@@ -18,6 +22,8 @@ class StationAdapter(
 
     inner class StationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cardView: MaterialCardView = itemView.findViewById(R.id.cardStation)
+        val colorBackground: View = itemView.findViewById(R.id.colorBackground)
+        val blurOverlay: View = itemView.findViewById(R.id.blurOverlay)
         val tvName: TextView = itemView.findViewById(R.id.tvStationName)
         val tvCounty: TextView = itemView.findViewById(R.id.tvCounty)
         val tvOperator: TextView = itemView.findViewById(R.id.tvTrainOperator)
@@ -41,7 +47,38 @@ class StationAdapter(
         } else {
             ContextCompat.getColor(holder.itemView.context, R.color.not_visited_station)
         }
-        holder.cardView.setCardBackgroundColor(backgroundColor)
+        holder.colorBackground.setBackgroundColor(backgroundColor)
+
+        // Set glass overlay color based on visit status and night mode
+        val isNightMode = holder.itemView.context.resources.configuration.uiMode and 
+            android.content.res.Configuration.UI_MODE_NIGHT_MASK == 
+            android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        val overlayColor = if (isNightMode) {
+            if (station.visitStatus == "Visited") {
+                Color.argb(26, 15, 75, 35) // Dark green overlay
+            } else {
+                Color.argb(26, 85, 25, 25) // Dark red overlay
+            }
+        } else {
+            if (station.visitStatus == "Visited") {
+                Color.argb(26, 52, 199, 89) // Light green overlay
+            } else {
+                Color.argb(26, 255, 59, 48) // Light red overlay
+            }
+        }
+        holder.blurOverlay.setBackgroundColor(overlayColor)
+
+        // Enable blur effect for Android 12+ devices
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            holder.blurOverlay.setRenderEffect(
+                RenderEffect.createBlurEffect(
+                    15f,
+                    15f,
+                    Shader.TileMode.CLAMP
+                )
+            )
+        }
 
         // Set text values
         holder.tvName.text = station.name
