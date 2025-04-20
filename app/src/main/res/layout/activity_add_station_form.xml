@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextStationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Station Name" />
+
+    <EditText
+        android:id="@+id/editTextCountry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Country" />
+
+    <EditText
+        android:id="@+id/editTextCounty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="County" />
+
+    <EditText
+        android:id="@+id/editTextTOC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Operator (TOC)" />
+
+    <Switch
+        android:id="@+id/switchFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mark as Favorite" />
+
+    <EditText
+        android:id="@+id/editTextLatitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Latitude"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/editTextLongitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Longitude"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/buttonAddStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Station" />
+
+</LinearLayout> 

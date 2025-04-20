@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -49,14 +49,31 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
-    testImplementation(libs.junit)
-    implementation("com.google.android.material:material:1.8.0")
+    
+    // AndroidX dependencies
+    implementation("androidx.appcompat:appcompat:1.7.0-alpha03")
+    implementation("androidx.recyclerview:recyclerview:1.4.0-alpha01")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("com.opencsv:opencsv:5.7.1")
-    implementation("com.google.code.gson:gson:2.8.9")
-    implementation("com.opencsv:opencsv:5.7.1")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    
+    // Material Design
+    implementation("com.google.android.material:material:1.11.0")
+    
+    // Room database
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    
+    // Gson for JSON handling
+    implementation("com.google.code.gson:gson:2.10.1")
+    
+    // CSV handling
+    implementation("com.opencsv:opencsv:5.9")
+    
+    // Testing
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

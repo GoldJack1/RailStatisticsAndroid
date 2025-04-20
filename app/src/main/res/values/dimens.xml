@@ -30,4 +30,7 @@
 
     <!-- Header padding -->
     <dimen name="header_top_padding">24dp</dimen>
+
+    <!-- Minimum touch target size -->
+    <dimen name="min_touch_target_size">48dp</dimen>
 </resources> 

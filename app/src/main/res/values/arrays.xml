@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="visit_status_options">
+        <item>Not Visited</item>
+        <item>Visited</item>
+        <item>Passed Through</item>
+        <item>Planned Visit</item>
+    </string-array>
+</resources> 

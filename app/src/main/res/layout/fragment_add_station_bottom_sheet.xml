@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/closeButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/close_button"
+            android:src="@drawable/ic_close"
+            app:tint="#FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="56dp"
+            android:text="@string/add_station"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/confirmButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/confirm_button"
+            android:src="@drawable/ic_check"
+            app:tint="#FFFFFF" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Basic Info Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_section_background"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:drawableStartCompat="@drawable/ic_info"
+                    android:drawablePadding="8dp"
+                    android:text="@string/basic_info"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/station_name"
+                    android:textColorHint="#BFBFBF"
+                    app:boxStrokeColor="#BFBFBF"
+                    app:hintTextColor="#BFBFBF">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextStationName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="840dp"
+                        app:drawableStartCompat="@drawable/ic_station"
+                        android:drawablePadding="8dp"
+                        android:textColor="#FFFFFF" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/country"
+                    android:textColorHint="#BFBFBF"
+                    app:boxStrokeColor="#BFBFBF"
+                    app:hintTextColor="#BFBFBF">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextCountry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="840dp"
+                        app:drawableStartCompat="@drawable/ic_flag"
+                        android:drawablePadding="8dp"
+                        android:textColor="#FFFFFF" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/county"
+                    android:textColorHint="#BFBFBF"
+                    app:boxStrokeColor="#BFBFBF"
+                    app:hintTextColor="#BFBFBF">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextCounty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="840dp"
+                        app:drawableStartCompat="@drawable/ic_map"
+                        android:drawablePadding="8dp"
+                        android:textColor="#FFFFFF" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/operator_toc"
+                    android:textColorHint="#BFBFBF"
+                    app:boxStrokeColor="#BFBFBF"
+                    app:hintTextColor="#BFBFBF">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextTOC"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="840dp"
+                        app:drawableStartCompat="@drawable/ic_building"
+                        android:drawablePadding="8dp"
+                        android:textColor="#FFFFFF" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/mark_as_favorite"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+
+            <!-- Location Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_section_background"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:drawableStartCompat="@drawable/ic_location"
+                    android:drawablePadding="8dp"
+                    android:text="@string/location"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/latitude"
+                    android:textColorHint="#BFBFBF"
+                    app:boxStrokeColor="#BFBFBF"
+                    app:hintTextColor="#BFBFBF">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextLatitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="840dp"
+                        app:drawableStartCompat="@drawable/ic_latitude"
+                        android:drawablePadding="8dp"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/longitude"
+                    android:textColorHint="#BFBFBF"
+                    app:boxStrokeColor="#BFBFBF"
+                    app:hintTextColor="#BFBFBF">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editTextLongitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="840dp"
+                        app:drawableStartCompat="@drawable/ic_longitude"
+                        android:drawablePadding="8dp"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:textColor="#FFFFFF" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Usage Data Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_section_background"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_weight="1"
+                        app:drawableStartCompat="@drawable/ic_usage"
+                        android:drawablePadding="8dp"
+                        android:text="@string/usage_data"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <ImageButton
+                        android:id="@+id/toggleUsageButton"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/toggle_usage_section"
+                        android:src="@drawable/ic_expand_more"
+                        app:tint="#FFFFFF" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/usageDataContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Container for dynamically added usage rows -->
+                    <LinearLayout
+                        android:id="@+id/usageRowsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <!-- Add new row button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addUsageRowButton"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/add_year"
+                        android:textColor="#FFFFFF"
+                        app:icon="@drawable/ic_add"
+                        app:iconTint="#FFFFFF"
+                        app:strokeColor="#FFFFFF" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout> 

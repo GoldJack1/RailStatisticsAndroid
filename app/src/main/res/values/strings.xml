@@ -37,4 +37,14 @@
     <string name="placeholder_county">South Lanarkshire</string>
     <string name="placeholder_visited_date">Visited on 20 Feb 2025</string>
     <string name="background_image">Background image for home page</string>
+    <string name="close_button">Close</string>
+    <string name="confirm_button">Confirm</string>
+    <string name="basic_info">Basic Info</string>
+    <string name="operator_toc">Operator (TOC)</string>
+    <string name="mark_as_favorite">Mark as Favorite</string>
+    <string name="location">Location</string>
+    <string name="add_year">Add Year</string>
+    <string name="year">Year</string>
+    <string name="usage">Usage</string>
+    <string name="toggle_usage_section">Toggle usage section</string>
 </resources>

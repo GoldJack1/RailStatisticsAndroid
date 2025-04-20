@@ -13,6 +13,7 @@ import android.os.Build
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.Color
+import com.jw.railstatistics.data.Station
 
 class StationAdapter(
     private val stations: List<Station>,

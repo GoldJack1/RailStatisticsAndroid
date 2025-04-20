@@ -2,36 +2,36 @@ package com.jw.railstatistics
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.opencsv.CSVReader
-import java.io.BufferedReader
+import com.jw.railstatistics.data.Station
+import com.jw.railstatistics.ui.AddStationBottomSheetFragment
+import com.opencsv.CSVParserBuilder
+import com.opencsv.CSVReaderBuilder
 import java.io.InputStreamReader
-import android.os.Build
-import android.graphics.Color
-import android.view.WindowManager
-import com.google.android.material.card.MaterialCardView
-import androidx.core.view.updateLayoutParams
-import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
 
-class NationalRailActivity : AppCompatActivity() {
+class NationalRailActivity : AppCompatActivity(), AddStationBottomSheetFragment.StationAddedListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: StationAdapter
@@ -62,27 +62,21 @@ class NationalRailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_national_rail)
 
         // Set up window insets
-        val headerContainer = findViewById<LinearLayout>(R.id.headerContainer)
-        val contentContainer = findViewById<LinearLayout>(R.id.contentContainer)
-        
-        ViewCompat.setOnApplyWindowInsetsListener(headerContainer) { view, windowInsets ->
-            val statusBars = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars())
-            val navigationBars = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            
-            // Update header padding to account for status bar
-            view.updatePadding(
-                top = statusBars.top + resources.getDimensionPixelSize(R.dimen.header_top_padding)
-            )
-            
-            // Update content padding to account for navigation bar
-            contentContainer.updatePadding(bottom = navigationBars.bottom)
-            
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.titleRow)) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(top = insets.top)
+            windowInsets
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.recyclerViewStations)) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(bottom = insets.bottom)
             windowInsets
         }
 
         // Set up click listeners for header buttons
         findViewById<MaterialCardView>(R.id.backButton).setOnClickListener {
-            onBackPressed()
+            finish()
         }
 
         findViewById<MaterialCardView>(R.id.statsButton).setOnClickListener {
@@ -110,8 +104,10 @@ class NationalRailActivity : AppCompatActivity() {
         adapter = StationAdapter(
             stationList,
             onItemClick = { station ->
-                val intent = Intent(this, StationDetailActivity::class.java)
-                intent.putExtra("station", station)
+                Log.d("NationalRail", "Opening detail view for station: ${station.name} with ID: ${station.id}")
+                val intent = Intent(this, StationDetailActivity::class.java).apply {
+                    putExtra("stationId", station.id)
+                }
                 startActivity(intent)
             },
             onUpdateStatusClick = { station ->
@@ -147,32 +143,60 @@ class NationalRailActivity : AppCompatActivity() {
         return true
     }
 
-    private fun showSettingsDropdown(anchorView: View) {
-        val popup = PopupMenu(this, anchorView)
+    override fun onStationAdded(station: Station) {
+        // Check for duplicates
+        if (stationList.any { it.name.equals(station.name, ignoreCase = true) }) {
+            Toast.makeText(this, "A station with this name already exists", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        stationList.add(station)
+        sortStationList()
+        adapter.notifyDataSetChanged() // Use notifyDataSetChanged since the position might have changed due to sorting
+        saveStationsToDisk()
+    }
+
+    private fun sortStationList() {
+        stationList.sortBy { it.name.lowercase() } // Sort case-insensitive
+    }
+
+    private fun showSettingsDropdown(view: View) {
+        val popup = PopupMenu(this, view)
         popup.menuInflater.inflate(R.menu.menu_settings, popup.menu)
-        popup.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
+        popup.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
                 R.id.menu_add_station -> {
-                    Toast.makeText(this, "Add Station selected", Toast.LENGTH_SHORT).show()
+                    val addStationFragment = AddStationBottomSheetFragment.newInstance()
+                    addStationFragment.stationAddedListener = this
+                    addStationFragment.show(supportFragmentManager, AddStationBottomSheetFragment.TAG)
                     true
                 }
                 R.id.menu_import -> {
-                    importCSV()
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                        type = "*/*"
+                        putExtra(Intent.EXTRA_MIME_TYPES, arrayOf(
+                            "text/csv",
+                            "application/vnd.ms-excel",
+                            "text/plain",
+                            "text/comma-separated-values"
+                        ))
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                    }
+                    csvImportLauncher.launch(intent)
+                    true
+                }
+                R.id.menu_export -> {
+                    val timestamp = java.text.SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.UK)
+                        .format(java.util.Date())
+                    csvExportLauncher.launch("stations_$timestamp.csv")
                     true
                 }
                 R.id.menu_import_template -> {
                     importTemplate()
                     true
                 }
-                R.id.menu_export -> {
-                    exportCSV()
-                    true
-                }
                 R.id.menu_clear_data -> {
-                    stationList.clear()
-                    adapter.notifyDataSetChanged()
-                    clearDataFromDisk()
-                    Toast.makeText(this, "Data cleared", Toast.LENGTH_SHORT).show()
+                    showClearDataConfirmation()
                     true
                 }
                 else -> false
@@ -181,109 +205,147 @@ class NationalRailActivity : AppCompatActivity() {
         popup.show()
     }
 
-    private fun importCSV() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            type = "*/*"
-            putExtra(
-                Intent.EXTRA_MIME_TYPES,
-                arrayOf("text/csv", "application/vnd.ms-excel", "text/plain", "text/comma-separated-values")
-            )
-            addCategory(Intent.CATEGORY_OPENABLE)
+    private fun showClearDataConfirmation() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Clear All Data")
+            .setMessage("Are you sure you want to clear all station data? This action cannot be undone.")
+            .setPositiveButton("Clear") { _, _ ->
+                clearAllData()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun clearAllData() {
+        // Clear the list
+        stationList.clear()
+        adapter.notifyDataSetChanged()
+
+        // Clear the saved data
+        try {
+            openFileOutput("stations.json", MODE_PRIVATE).use { output ->
+                output.write("[]".toByteArray())
+            }
+            Toast.makeText(this, "All data cleared successfully", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Failed to clear data", Toast.LENGTH_SHORT).show()
         }
-        csvImportLauncher.launch(Intent.createChooser(intent, "Select CSV file"))
+    }
+
+    // Helper method to parse CSV data into Station objects
+    private fun parseCSVData(reader: com.opencsv.CSVReader): List<Station> {
+        // Skip header row
+        reader.readNext()
+        
+        return reader.readAll().mapNotNull { line ->
+            if (line.size >= 9) { // Minimum columns needed
+                // Create yearlyUsage map for years 2024-1998 (columns 9-35)
+                val yearlyUsage = mutableMapOf<Int, String>()
+                var year = 2024
+                for (i in 9..35) {
+                    val usage = line.getOrNull(i)?.trim() ?: ""
+                    yearlyUsage[year] = usage
+                    year--
+                }
+                
+                // Normalize visit status to "Visited" or "Not Visited"
+                val rawVisitStatus = line[4].trim().lowercase()
+                val visitStatus = when {
+                    rawVisitStatus == "yes" || rawVisitStatus == "visited" -> "Visited"
+                    else -> "Not Visited"
+                }
+                
+                Station(
+                    name = line[0].trim(),
+                    country = line[1].trim(),
+                    county = line[2].trim(),
+                    trainOperator = line[3].trim(),
+                    visitStatus = visitStatus,
+                    visitedDate = line[5].trim(),
+                    favorite = line[6].trim().equals("yes", ignoreCase = true),
+                    latitude = line[7].trim(),
+                    longitude = line[8].trim(),
+                    yearlyUsage = yearlyUsage
+                )
+            } else null
+        }
     }
 
     private fun parseCSV(uri: Uri) {
         try {
             contentResolver.openInputStream(uri)?.use { inputStream ->
-                CSVReader(InputStreamReader(inputStream)).use { reader ->
-                    var isFirstLine = true
-                    
-                    reader.forEach { tokens ->
-                        if (isFirstLine) {
-                            isFirstLine = false
-                            return@forEach
-                        }
-                        
-                        if (tokens.size >= 9) { // Minimum columns needed
-                            // Create yearlyUsage map for years 2024-1998 (columns 9-35)
-                            val yearlyUsage = mutableMapOf<Int, String>()
-                            var year = 2024
-                            for (i in 9..35) {
-                                val usage = tokens.getOrNull(i)?.trim() ?: ""
-                                yearlyUsage[year] = usage
-                                year--
-                            }
-                            
-                            // Normalize visit status to "Visited" or "Not Visited"
-                            val rawVisitStatus = tokens[4].trim().lowercase()
-                            val visitStatus = when {
-                                rawVisitStatus == "yes" || rawVisitStatus == "visited" -> "Visited"
-                                else -> "Not Visited"
-                            }
-                            
-                            val station = Station(
-                                name = tokens[0].trim(),
-                                country = tokens[1].trim(),
-                                county = tokens[2].trim(),
-                                trainOperator = tokens[3].trim(),
-                                visitStatus = visitStatus,
-                                visitedDate = tokens[5].trim(),
-                                favorite = tokens[6].trim().equals("yes", ignoreCase = true),
-                                latitude = tokens[7].trim(),
-                                longitude = tokens[8].trim(),
-                                yearlyUsage = yearlyUsage
-                            )
-                            stationList.add(station)
-                        }
+                val parser = CSVParserBuilder()
+                    .withSeparator(',')
+                    .withIgnoreQuotations(false)
+                    .build()
+                
+                val reader = CSVReaderBuilder(InputStreamReader(inputStream))
+                    .withCSVParser(parser)
+                    .build()
+                
+                val newStations = parseCSVData(reader)
+                
+                // Check for duplicates
+                val duplicates = newStations.filter { newStation -> 
+                    stationList.any { it.name.equals(newStation.name, ignoreCase = true) }
+                }
+                
+                if (duplicates.isNotEmpty()) {
+                    val message = if (duplicates.size == 1) {
+                        "Station '${duplicates[0].name}' already exists and will be skipped"
+                    } else {
+                        "${duplicates.size} stations already exist and will be skipped"
                     }
+                    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+                }
+                
+                // Add only non-duplicate stations
+                val uniqueStations = newStations.filterNot { newStation -> 
+                    stationList.any { it.name.equals(newStation.name, ignoreCase = true) }
+                }
+                
+                if (uniqueStations.isNotEmpty()) {
+                    stationList.addAll(uniqueStations)
+                    sortStationList() // Sort after adding new stations
+                    adapter.notifyDataSetChanged() // Use notifyDataSetChanged since positions might have changed
+                    saveStationsToDisk()
+                    Toast.makeText(this, "${uniqueStations.size} stations imported", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "No new stations to import", Toast.LENGTH_SHORT).show()
                 }
             }
-            adapter.notifyDataSetChanged()
-            Toast.makeText(this, "CSV imported successfully", Toast.LENGTH_SHORT).show()
-            saveStationsToDisk()
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Failed to import CSV", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Error reading CSV: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun saveStationsToDisk() {
         try {
-            val gson = Gson()
-            val json = gson.toJson(stationList)
+            val json = Gson().toJson(stationList)
             openFileOutput("stations.json", MODE_PRIVATE).use { output ->
                 output.write(json.toByteArray())
             }
-            Toast.makeText(this, "Data saved to disk", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun clearDataFromDisk() {
-        if (deleteFile("stations.json")) {
-            Toast.makeText(this, "Data cleared from disk", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "Failed to clear data from disk", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Error saving stations: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun loadStationsFromDisk() {
         try {
-            val fileInput = openFileInput("stations.json")
-            val json = fileInput.bufferedReader().use { it.readText() }
-            fileInput.close()
-            val gson = Gson()
-            val type = object : TypeToken<List<Station>>() {}.type
-            val savedStations: List<Station> = gson.fromJson(json, type)
-            stationList.clear()
-            stationList.addAll(savedStations)
-            adapter.notifyDataSetChanged()
+            openFileInput("stations.json").use { input ->
+                val json = input.bufferedReader().use { it.readText() }
+                val type = object : TypeToken<List<Station>>() {}.type
+                val loadedStations = Gson().fromJson<List<Station>>(json, type) ?: emptyList()
+                stationList.clear()
+                stationList.addAll(loadedStations)
+                sortStationList() // Sort when loading stations
+                adapter.notifyDataSetChanged()
+            }
         } catch (e: Exception) {
+            // File might not exist yet, that's okay
             e.printStackTrace()
-            // It's fine if the file doesn't exist yet
         }
     }
 
@@ -308,7 +370,7 @@ class NationalRailActivity : AppCompatActivity() {
     }
 
     private fun exportCSV() {
-        val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.UK).format(java.util.Date())
+        val timestamp = java.text.SimpleDateFormat("yyyyMMddHHmmss", java.util.Locale.UK).format(java.util.Date())
         val filename = "stations_$timestamp.csv"
         csvExportLauncher.launch(filename)
     }
@@ -368,61 +430,41 @@ class NationalRailActivity : AppCompatActivity() {
 
     private fun importTemplate() {
         try {
-            // Clear existing data
+            val oldSize = stationList.size
             stationList.clear()
+            adapter.notifyItemRangeRemoved(0, oldSize)
             
-            // Read and parse the template file
             assets.open("template_stations.csv").use { inputStream ->
-                CSVReader(InputStreamReader(inputStream)).use { reader ->
-                    var isFirstLine = true
-                    
-                    reader.forEach { tokens ->
-                        if (isFirstLine) {
-                            isFirstLine = false
-                            return@forEach
-                        }
-                        
-                        if (tokens.size >= 9) { // Minimum columns needed
-                            // Create yearlyUsage map for years 2024-1998 (columns 9-35)
-                            val yearlyUsage = mutableMapOf<Int, String>()
-                            var year = 2024
-                            for (i in 9..35) {
-                                val usage = tokens.getOrNull(i)?.trim() ?: ""
-                                yearlyUsage[year] = usage
-                                year--
-                            }
-                            
-                            // Normalize visit status to "Visited" or "Not Visited"
-                            val rawVisitStatus = tokens[4].trim().lowercase()
-                            val visitStatus = when {
-                                rawVisitStatus == "yes" || rawVisitStatus == "visited" -> "Visited"
-                                else -> "Not Visited"
-                            }
-                            
-                            val station = Station(
-                                name = tokens[0].trim(),
-                                country = tokens[1].trim(),
-                                county = tokens[2].trim(),
-                                trainOperator = tokens[3].trim(),
-                                visitStatus = visitStatus,
-                                visitedDate = tokens[5].trim(),
-                                favorite = tokens[6].trim().equals("yes", ignoreCase = true),
-                                latitude = tokens[7].trim(),
-                                longitude = tokens[8].trim(),
-                                yearlyUsage = yearlyUsage
-                            )
-                            stationList.add(station)
-                        }
-                    }
-                }
+                val parser = CSVParserBuilder()
+                    .withSeparator(',')
+                    .withIgnoreQuotations(false)
+                    .build()
+                
+                val reader = CSVReaderBuilder(InputStreamReader(inputStream))
+                    .withCSVParser(parser)
+                    .build()
+                
+                val newStations = parseCSVData(reader)
+                stationList.addAll(newStations)
+                sortStationList() // Sort after importing template
+                adapter.notifyDataSetChanged()
             }
             
-            adapter.notifyDataSetChanged()
             saveStationsToDisk()
             Toast.makeText(this, "Template imported successfully", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, "Failed to import template", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadStationsFromDisk() // Refresh the list when returning from other activities
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        saveStationsToDisk()
     }
 }

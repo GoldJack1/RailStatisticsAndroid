@@ -12,14 +12,12 @@
         android:scaleType="centerCrop"
         android:src="@drawable/homepageimg"
         android:contentDescription="@string/background_image"
-        android:alpha="0.7"
-        android:fitsSystemWindows="false" />
+        android:alpha="0.7" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:fitsSystemWindows="false">
+        android:orientation="vertical">
 
         <!-- Header container -->
         <LinearLayout
@@ -30,6 +28,7 @@
             android:paddingBottom="8dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            android:paddingTop="24dp"
             android:background="@color/header_background">
 
             <!-- Title row with back button -->
@@ -84,6 +83,7 @@
                     android:backgroundTint="#4D000000">
 
                     <ImageView
+                        android:id="@+id/editButtonIcon"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center"
@@ -99,13 +99,13 @@
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:clipToPadding="false"
-            android:fillViewport="true"
-            android:paddingTop="16dp"
-            android:paddingStart="@dimen/screen_padding"
-            android:paddingEnd="@dimen/screen_padding"
-            android:paddingBottom="@dimen/screen_padding">
+            android:paddingTop="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -135,6 +135,21 @@
                             android:textStyle="bold"
                             android:textSize="20sp"/>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutStationName"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/station_name"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editStationName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
                         <TextView
                             android:id="@+id/tvCountry"
                             android:layout_width="match_parent"
@@ -142,6 +157,21 @@
                             android:text="@string/country"
                             android:textSize="16sp"
                             android:layout_marginTop="4dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutCountry"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/country"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editCountry"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
 
                         <TextView
                             android:id="@+id/tvCounty"
@@ -151,6 +181,21 @@
                             android:textSize="16sp"
                             android:layout_marginTop="4dp"/>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutCounty"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/county"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editCounty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
                         <TextView
                             android:id="@+id/tvTOC"
                             android:layout_width="match_parent"
@@ -158,6 +203,21 @@
                             android:text="@string/toc"
                             android:textSize="16sp"
                             android:layout_marginTop="4dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutTOC"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/toc"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTOC"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"/>
+                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -182,6 +242,22 @@
                             android:text="@string/latitude"
                             android:textSize="16sp"/>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutLatitude"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/latitude"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editLatitude"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:inputType="numberDecimal|numberSigned"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
                         <TextView
                             android:id="@+id/tvLongitude"
                             android:layout_width="match_parent"
@@ -189,6 +265,22 @@
                             android:text="@string/longitude"
                             android:textSize="16sp"
                             android:layout_marginTop="4dp"/>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutLongitude"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/longitude"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editLongitude"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:inputType="numberDecimal|numberSigned"/>
+                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -206,13 +298,24 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
+                        <!-- Visit Status -->
                         <TextView
                             android:id="@+id/tvVisitStatus"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/visit_status"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp"
+                            android:layout_marginTop="4dp"/>
 
+                        <!-- Visit Status Toggle -->
+                        <Spinner
+                            android:id="@+id/spinnerVisitStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="4dp"/>
+
+                        <!-- Visit Date (only shown when visited) -->
                         <TextView
                             android:id="@+id/tvVisitDate"
                             android:layout_width="match_parent"
@@ -221,6 +324,23 @@
                             android:textSize="16sp"
                             android:layout_marginTop="4dp"/>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputLayoutVisitDate"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/visit_date"
+                            android:visibility="gone">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editVisitDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="16sp"
+                                android:focusable="false"/>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Favorite Button -->
                         <ImageView
                             android:id="@+id/ivFavourite"
                             android:layout_width="24dp"
@@ -228,7 +348,11 @@
                             android:layout_marginTop="8dp"
                             android:contentDescription="@string/favourite"
                             android:src="@drawable/ic_star_outline"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
                             app:tint="?attr/colorSecondary" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -259,6 +383,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"/>
+
+                        <LinearLayout
+                            android:id="@+id/layoutUsageDataEdit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:visibility="gone"/>
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
