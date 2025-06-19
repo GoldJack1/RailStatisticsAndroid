@@ -6,10 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Station::class], version = 1, exportSchema = false)
-@TypeConverters(UsageDataConverter::class)
+@Database(entities = [Station::class, TicketRecord::class], version = 2, exportSchema = false)
+@TypeConverters(UsageDataConverter::class, LoyaltyProgramConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun stationDao(): StationDao
+    abstract fun ticketDao(): TicketDao
 
     companion object {
         @Volatile
@@ -21,7 +22,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "rail_statistics_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration() // For simplicity, recreate database on version change
+                .build()
                 INSTANCE = instance
                 instance
             }
