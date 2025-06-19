@@ -51,6 +51,14 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     
+    // Additional Compose dependencies
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.runtime:runtime")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    
     // AndroidX dependencies
     implementation("androidx.appcompat:appcompat:1.7.0-alpha03")
     implementation("androidx.recyclerview:recyclerview:1.4.0-alpha01")

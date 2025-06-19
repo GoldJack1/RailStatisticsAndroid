@@ -1,6 +1,7 @@
 package com.jw.railstatistics
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -9,11 +10,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.DirectionsRailway
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.jw.railstatistics.data.TicketRecord
+import com.jw.railstatistics.data.*
 import com.jw.railstatistics.ui.*
 import com.jw.railstatistics.ui.theme.RailStatisticsTheme
 
@@ -230,7 +239,7 @@ fun TicketTrackingScreen(
                         ) {
                             DropdownMenuItem(
                                 text = { Text("Import CSV") },
-                                leadingIcon = { Icon(Icons.Default.Download, null) },
+                                leadingIcon = { Icon(Icons.Default.FileDownload, null) },
                                 onClick = {
                                     csvImportLauncher.launch("text/csv")
                                     showMenu = false
@@ -238,7 +247,7 @@ fun TicketTrackingScreen(
                             )
                             DropdownMenuItem(
                                 text = { Text("Export CSV") },
-                                leadingIcon = { Icon(Icons.Default.Upload, null) },
+                                leadingIcon = { Icon(Icons.Default.FileUpload, null) },
                                 onClick = {
                                     csvExportLauncher.launch("tickets_export.csv")
                                     showMenu = false
@@ -299,7 +308,7 @@ fun TicketTrackingScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Train,
+                        imageVector = Icons.Default.DirectionsRailway,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant

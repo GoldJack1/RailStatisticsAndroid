@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,15 +20,37 @@ data class ChartData(
 )
 
 @Composable
-fun BarChartView(
-    data: List<ChartData>,
+fun BarChart(
+    data: List<Pair<String, Int>>,
     title: String,
     modifier: Modifier = Modifier
 ) {
+    if (data.isEmpty()) {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No data available",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        return
+    }
+
+    val maxValue = data.maxOfOrNull { it.second } ?: 0
+    
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(12.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -36,85 +58,54 @@ fun BarChartView(
             Text(
                 text = title,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
+                fontWeight = FontWeight.Bold
             )
             
-            if (data.isNotEmpty()) {
-                val maxValue = data.maxOfOrNull { it.value } ?: 1.0
-                val sortedData = data.sortedByDescending { it.value }
-                
-                sortedData.forEach { item ->
-                    BarChartItem(
-                        label = item.label,
-                        value = item.value,
-                        maxValue = maxValue,
-                        color = item.color
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Simple bar chart using Compose components
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                data.forEach { (label, value) ->
+                    val barWidth = if (maxValue > 0) {
+                        (value.toFloat() / maxValue)
+                    } else {
+                        0f
+                    }
+                    
+                    Column {
+                        Text(
+                            text = "$label: $value",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        
+                        Spacer(modifier = Modifier.height(4.dp))
+                        
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(20.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceVariant,
+                                    RoundedCornerShape(10.dp)
+                                )
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(fraction = barWidth)
+                                    .background(
+                                        MaterialTheme.colorScheme.primary,
+                                        RoundedCornerShape(10.dp)
+                                    )
+                            )
+                        }
+                    }
                 }
-            } else {
-                Text(
-                    text = "No data available",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
-        }
-    }
-}
-
-@Composable
-private fun BarChartItem(
-    label: String,
-    value: Double,
-    maxValue: Double,
-    color: Color
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-        ) {
-            // Background bar
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        MaterialTheme.colorScheme.surfaceVariant,
-                        RoundedCornerShape(10.dp)
-                    )
-            )
-            
-            // Value bar
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(fraction = (value / maxValue).toFloat())
-                    .background(color, RoundedCornerShape(10.dp))
-            )
-            
-            // Value text
-            Text(
-                text = value.toInt().toString(),
-                fontSize = 12.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 8.dp)
-            )
         }
     }
 }
@@ -133,8 +124,8 @@ fun SimpleBarChart(
         )
     }
     
-    BarChartView(
-        data = chartData,
+    BarChart(
+        data = data,
         title = title,
         modifier = modifier
     )

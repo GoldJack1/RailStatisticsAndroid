@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.jw.railstatistics.data.TicketRecord
+import com.jw.railstatistics.data.*
 import com.jw.railstatistics.ui.*
 import com.jw.railstatistics.ui.theme.RailStatisticsTheme
 

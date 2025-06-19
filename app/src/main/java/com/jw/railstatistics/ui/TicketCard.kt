@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -101,7 +103,7 @@ fun TicketCard(
                 
                 // Arrow
                 Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.ArrowForward,
+                    imageVector = Icons.Default.ArrowForward,
                     contentDescription = "To",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
@@ -167,67 +169,75 @@ fun TicketCard(
                 ) {
                     // TOC
                     ticket.toc?.let { toc ->
-                        Chip(
+                        FilterChip(
+                            selected = false,
                             onClick = { },
-                            colors = ChipDefaults.chipColors(
+                            label = {
+                                Text(
+                                    text = toc,
+                                    fontSize = 10.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             )
-                        ) {
-                            Text(
-                                text = toc,
-                                fontSize = 10.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                        )
                     }
                     
                     // Delay indicator
                     if (ticket.wasDelayed) {
-                        Chip(
+                        FilterChip(
+                            selected = false,
                             onClick = { },
-                            colors = ChipDefaults.chipColors(
+                            label = {
+                                Text(
+                                    text = "Delayed",
+                                    fontSize = 10.sp,
+                                    color = Color.Red
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
                                 containerColor = Color.Red.copy(alpha = 0.1f)
                             )
-                        ) {
-                            Text(
-                                text = "Delayed",
-                                fontSize = 10.sp,
-                                color = Color.Red
-                            )
-                        }
+                        )
                     }
                     
                     // Compensation indicator
                     if (ticket.pendingCompensation) {
-                        Chip(
+                        FilterChip(
+                            selected = false,
                             onClick = { },
-                            colors = ChipDefaults.chipColors(
+                            label = {
+                                Text(
+                                    text = "Compensation",
+                                    fontSize = 10.sp,
+                                    color = Color.Yellow.copy(alpha = 0.8f)
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
                                 containerColor = Color.Yellow.copy(alpha = 0.1f)
                             )
-                        ) {
-                            Text(
-                                text = "Compensation",
-                                fontSize = 10.sp,
-                                color = Color.Yellow.copy(alpha = 0.8f)
-                            )
-                        }
+                        )
                     }
                     
                     // Return indicator
                     if (ticket.isReturn) {
-                        Chip(
+                        FilterChip(
+                            selected = false,
                             onClick = { },
-                            colors = ChipDefaults.chipColors(
+                            label = {
+                                Text(
+                                    text = "Return",
+                                    fontSize = 10.sp,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer
                             )
-                        ) {
-                            Text(
-                                text = "Return",
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+                        )
                     }
                 }
             }
@@ -242,48 +252,54 @@ fun TicketCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         loyalty.virginPoints?.let { points ->
-                            Chip(
+                            FilterChip(
+                                selected = false,
                                 onClick = { },
-                                colors = ChipDefaults.chipColors(
+                                label = {
+                                    Text(
+                                        text = "Virgin: $points",
+                                        fontSize = 10.sp,
+                                        color = Color(0xFFE31837)
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
                                     containerColor = Color(0xFFE31837).copy(alpha = 0.1f)
                                 )
-                            ) {
-                                Text(
-                                    text = "Virgin: $points",
-                                    fontSize = 10.sp,
-                                    color = Color(0xFFE31837)
-                                )
-                            }
+                            )
                         }
                         
                         loyalty.lnerCashValue?.let { value ->
-                            Chip(
+                            FilterChip(
+                                selected = false,
                                 onClick = { },
-                                colors = ChipDefaults.chipColors(
+                                label = {
+                                    Text(
+                                        text = "LNER: £$value",
+                                        fontSize = 10.sp,
+                                        color = Color(0xFFCE0E2D)
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
                                     containerColor = Color(0xFFCE0E2D).copy(alpha = 0.1f)
                                 )
-                            ) {
-                                Text(
-                                    text = "LNER: £$value",
-                                    fontSize = 10.sp,
-                                    color = Color(0xFFCE0E2D)
-                                )
-                            }
+                            )
                         }
                         
                         loyalty.clubAvantiJourneys?.let { journeys ->
-                            Chip(
+                            FilterChip(
+                                selected = false,
                                 onClick = { },
-                                colors = ChipDefaults.chipColors(
+                                label = {
+                                    Text(
+                                        text = "Avanti: $journeys",
+                                        fontSize = 10.sp,
+                                        color = Color(0xFF004354)
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
                                     containerColor = Color(0xFF004354).copy(alpha = 0.1f)
                                 )
-                            ) {
-                                Text(
-                                    text = "Avanti: $journeys",
-                                    fontSize = 10.sp,
-                                    color = Color(0xFF004354)
-                                )
-                            }
+                            )
                         }
                     }
                 }

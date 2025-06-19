@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 
 class TicketRepository(
     private val ticketDao: TicketDao,
@@ -89,37 +90,38 @@ class TicketRepository(
             getTicketsByYear(year).map { it }
         }
 
-        return tickets.map { ticketList ->
-            val totalSpent = ticketList.sumOf { ticket ->
-                ticket.price.replace("£", "").replace(",", "").toDoubleOrNull() ?: 0.0
-            }
-            
-            val totalCompensation = ticketList.sumOf { ticket ->
-                ticket.compensation.replace("£", "").replace(",", "").toDoubleOrNull() ?: 0.0
-            }
-            
-            val totalVirginPoints = ticketList.sumOf { ticket ->
-                ticket.loyaltyProgram?.virginPoints?.toIntOrNull() ?: 0
-            }
-            
-            val totalLNERPerks = ticketList.sumOf { ticket ->
-                ticket.loyaltyProgram?.lnerCashValue?.toDoubleOrNull() ?: 0.0
-            }
-            
-            val totalClubAvantiJourneys = ticketList.sumOf { ticket ->
-                ticket.loyaltyProgram?.clubAvantiJourneys?.toIntOrNull() ?: 0
-            }
-
-            TicketStatistics(
-                totalTickets = ticketList.size,
-                totalSpent = totalSpent,
-                totalCompensation = totalCompensation,
-                adjustedTotal = totalSpent - totalCompensation,
-                totalVirginPoints = totalVirginPoints,
-                totalLNERPerks = totalLNERPerks,
-                totalClubAvantiJourneys = totalClubAvantiJourneys
-            )
+        // Collect the tickets from the Flow
+        val ticketList = tickets.first()
+        
+        val totalSpent = ticketList.sumOf { ticket ->
+            ticket.price.replace("£", "").replace(",", "").toDoubleOrNull() ?: 0.0
         }
+        
+        val totalCompensation = ticketList.sumOf { ticket ->
+            ticket.compensation.replace("£", "").replace(",", "").toDoubleOrNull() ?: 0.0
+        }
+        
+        val totalVirginPoints = ticketList.sumOf { ticket ->
+            ticket.loyaltyProgram?.virginPoints?.toIntOrNull() ?: 0
+        }
+        
+        val totalLNERPerks = ticketList.sumOf { ticket ->
+            ticket.loyaltyProgram?.lnerCashValue?.toDoubleOrNull() ?: 0.0
+        }
+        
+        val totalClubAvantiJourneys = ticketList.sumOf { ticket ->
+            ticket.loyaltyProgram?.clubAvantiJourneys?.toIntOrNull() ?: 0
+        }
+
+        return TicketStatistics(
+            totalTickets = ticketList.size,
+            totalSpent = totalSpent,
+            totalCompensation = totalCompensation,
+            adjustedTotal = totalSpent - totalCompensation,
+            totalVirginPoints = totalVirginPoints,
+            totalLNERPerks = totalLNERPerks,
+            totalClubAvantiJourneys = totalClubAvantiJourneys
+        )
     }
 }
 

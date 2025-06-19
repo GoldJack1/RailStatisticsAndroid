@@ -121,6 +121,17 @@ class TicketViewModel(
         }
     }
 
+    fun deleteAllTickets() {
+        viewModelScope.launch {
+            try {
+                repository.deleteAllTickets()
+                _errorMessage.value = null
+            } catch (e: Exception) {
+                _errorMessage.value = "Error deleting all tickets: ${e.message}"
+            }
+        }
+    }
+
     fun importCSV(uri: Uri) {
         viewModelScope.launch {
             _isLoading.value = true

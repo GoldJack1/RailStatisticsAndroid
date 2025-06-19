@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jw.railstatistics.data.TicketRecord
 import com.jw.railstatistics.data.TOCColors
+import com.jw.railstatistics.data.TicketStatistics
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -96,7 +99,7 @@ fun TicketStatisticsScreen(
             
             IconButton(onClick = onDismiss) {
                 Icon(
-                    imageVector = androidx.compose.material.icons.Icons.Default.Close,
+                    imageVector = Icons.Default.Close,
                     contentDescription = "Close"
                 )
             }
