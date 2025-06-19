@@ -41,9 +41,10 @@ class MainActivity : AppCompatActivity() {
         val btnTicketTracker = findViewById<Button>(R.id.btnTicketTracker)
         val btnNationalRail = findViewById<Button>(R.id.btnNationalRail)
 
-        // TODO: Implement Ticket Tracker functionality
+        // Navigate to Ticket Tracking Activity
         btnTicketTracker.setOnClickListener {
-            // For now, simply show a placeholder
+            val intent = Intent(this, TicketTrackingActivity::class.java)
+            startActivity(intent)
         }
 
         btnNationalRail.setOnClickListener {

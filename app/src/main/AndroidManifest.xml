@@ -29,5 +29,11 @@
         <activity
             android:name="com.jw.railstatistics.AddStationFormActivity"
             android:exported="true" />
+        <activity
+            android:name="com.jw.railstatistics.TicketTrackingActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.jw.railstatistics.TicketDetailActivity"
+            android:exported="false" />
     </application>
 </manifest>
